@@ -1,0 +1,24 @@
+##for hifiCNV analysis
+
+cd /nobackup/ksbr95/hifiCNV
+
+sed 's/50/100/g' /nobackup/ksbr95/work.sh | sed 's/edta/'$sample'/g'  > $sample.sh
+
+module load bioinformatics
+module load minimap2/2.24 
+module load  samtools/1.17
+th=100
+asm=/nobackup/ksbr95/hifiCNV/hifiasm_H.moselyanum_out.bp.p_ctg.fa
+hifi=/nobackup/ksbr95/02_genome/01_hifi/H.m.hifi.fq.gz
+sample=H.m
+###for alignment
+minimap2 -ax map-hifi -t $th --eqx $asm $hifi | samtools sort -O BAM - > $sample.hifi.bam
+samtools index  $sample.hifi.bam
+
+##for CNV calling
+module load hificnv
+bam=$sample.hifi.bam
+hificnv --ref $asm --bam $bam --output-prefix $sample.hifi --threads $th --cov-regex ^ptg
+
+#  [default: ^(chr)?\d{1,2}$]
+sbatch $sample.sh
