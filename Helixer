@@ -1,0 +1,19 @@
+#### done on stanage
+
+#!/bin/bash
+
+# Request resources:
+
+#SBATCH --partition=gpu
+#SBATCH --qos=gpu
+#SBATCH --gres=gpu:2
+#SBATCH --mem=82G
+#SBATCH -t 96:00:00 # time limit for job (format: days-hours:minutes:seconds) max 96hrs
+#SBATCH --mail-user=gwhirons-alecrim1@sheffield.ac.uk # Email address to sent status report
+#SBATCH --mail-type=BEGIN,END,FAIL # Types of status update to email
+
+
+export HELIXER_SIF=/mnt/parscratch/users/bop21gwh/helixer/helixer-docker_helixer_v0.3.2_cuda_11.8.0-cudnn8.sif ### this was added
+
+apptainer exec ${HELIXER_SIF} Helixer.py --fasta-path M.b_assembly.bp.p_ctg.fa \
+--lineage land_plant --gff-output-path hifiasm_M.beccarii_out.gff3
